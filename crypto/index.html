@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Exchange</title>
+    <!-- Add your CSS files here -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Paper Trading</h1>
+    <button onclick="checkTradingStatus()">Check Buy Power</button>
+    <button onclick="calculateBalanceChange()">Buy Limit</button>
+    <button onclick="submitOrder()">Sell Market</button>
+    <button onclick="getClosedOrdersForSymbol()">Sell Limit</button>
+    <div class="portfolio">
+        <h2>Portfolio</h2>
+        <button onclick="getPortfolio()">View Portfolio</button>
+        <ul id="portfolioList"></ul>
+    </div>
+</div>
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+    {
+        "autosize": true,
+        "symbol": "BINANCE:BTCUSDT",
+        "interval": "15",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "kr",
+        "support_host": "https://www.tradingview.com",
+        "enable_publishing": false,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": false,
+        "watchlist": [
+            "BINANCE:BTCUSDT",
+            "BINANCE:ETHUSDT",
+            "BINANCE:SOLUSDT",
+            "BINANCE:XRPUSDT"
+        ],
+        "details": true,
+        "calendar": false,
+        "studies": [
+            "STD;RSI"
+        ]
+    }
+    </script>
+</div>
+<!-- TradingView Widget END -->
+<!-- Include the Alpaca API library -->
+<script src="https://cdn.jsdelivr.net/npm/@alpacahq/alpaca-trade-api@2"></script>
+<script src="app.js"></script>
+</body>
+</html>

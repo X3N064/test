@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Paper Trading Platform</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Paper Trading Platform</h1>
+
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+    {
+        "autosize": true,
+        "symbol": "BINANCE:BTCUSDT",
+        "interval": "15",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "kr",
+        "support_host": "https://www.tradingview.com",
+        "enable_publishing": false,
+        "hide_side_toolbar": false,
+        "allow_symbol_change": false,
+        "watchlist": [
+            "BINANCE:BTCUSDT",
+            "BINANCE:ETHUSDT",
+            "BINANCE:SOLUSDT",
+            "BINANCE:XRPUSDT"
+        ],
+        "details": true,
+        "calendar": false,
+        "studies": [
+            "STD;RSI"
+        ]
+    }
+    </script>
+  </div>
+  <h2>Trading Panel</h2>
+  <form>
+    <label for="symbol">Symbol:</label>
+    <input type="text" id="symbol" name="symbol">
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity">
+    <button type="submit">Buy</button>
+    <button type="submit">Sell</button>
+  </form>
+
+  <h2>Order History</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Date/Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in order_history %}
+      <tr>
+        <td>{{ order.symbol }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.price }}</td>
+        <td>{{ order.datetime }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Portfolio Value: ${{ portfolio_value }}</h2>
+
+</body>
+</html>

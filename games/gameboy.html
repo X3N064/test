@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>GBA 0x0</title>
+  <style>
+    .fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      overflow: auto;
+      background: hsl(0, 0%, 27%);
+      /* Just to visualize the extent */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="fullscreen">
+    <div id="game"></div>
+  </div>
+  <script type="text/javascript">
+    // Initialize EJS variables
+    var EJS_player = '#game';
+    var EJS_biosUrl = '';
+    var EJS_gameUrl = 'games/pokemon_quetzal.gba'; // Path to the game ROM
+    var EJS_core = 'gba'; // Optional core: vbam, vbanext
+
+    // Initialize the emulator player
+    window.initEmulator();
+  </script>
+  <script src="https://www.emulatorjs.com/loader.js"></script>
+</body>
+
+</html>
