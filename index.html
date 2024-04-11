@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>모험 게임</title>
+    <style>
+        /* 스타일 시트 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #game-interface {
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 5px;
+        }
+
+        #character-status,
+        #inventory {
+            margin-top: 20px;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>모험 게임</h1>
+
+    <!-- 게임 시작, 저장, 로드 버튼 -->
+    <button onclick="startGame()">게임 시작</button>
+    <button onclick="saveGame()">게임 저장</button>
+    <button onclick="loadGame()">게임 로드</button>
+
+    <!-- 게임 인터페이스 -->
+    <div id="game-interface">
+        <button onclick="changeLocation('home')">홈으로 이동</button>
+        <button onclick="changeLocation('shop')">상점으로 이동</button>
+        <button onclick="changeLocation('dungeon1')">던전1로 이동</button>
+        <!-- 필요한 던전 버튼 추가 -->
+    </div>
+
+    <!-- 캐릭터 상태 -->
+    <div id="character-status">
+        <h2>캐릭터 상태</h2>
+        <div id="character-info"></div>
+    </div>
+
+    <!-- 인벤토리 -->
+    <div id="inventory">
+        <h2>인벤토리</h2>
+        <div id="inventory-info"></div>
+    </div>
+
+    <!-- 자바스크립트 코드 -->
+    <script>
+        let character = {
+            name: '',
+            level: 1,
+            health: 1,
+            attack: 1,
+            defense: 1,
+            speed: 1,
+            money: 1,
+            inventory: {
+                helmet: null,
+                armor: null,
+                boots: null,
+                weapon: null
+            }
+        };
+
+        function startGame() {
+            character.name = prompt("캐릭터 이름을 입력하세요:");
+            // 다른 초기화 작업을 수행할 수 있습니다.
+            showCharacterStatus();
+        }
+
+        function showCharacterStatus() {
+            console.log(`캐릭터 이름: ${character.name}`);
+            console.log(`레벨: ${character.level}`);
+            console.log(`체력: ${character.health}`);
+            console.log(`공격력: ${character.attack}`);
+            console.log(`방어력: ${character.defense}`);
+            console.log(`속도: ${character.speed}`);
+            console.log(`소지금: ${character.money}`);
+            // 아이템 및 인벤토리 상태를 보여줍니다.
+        }
+        let map = {
+            home: "home",
+            shop: "shop",
+            dungeons: Array.from({ length: 10 }, (_, i) => `dungeon${i + 1}`)
+        };
+
+        let currentLocation = map.home;
+
+        function changeLocation(newLocation) {
+            currentLocation = newLocation;
+            console.log(`현재 위치: ${currentLocation}`);
+        }
+        function addItemToInventory(itemType, rarity) {
+            character.inventory[itemType] = rarity;
+            updateStatsByItem(itemType, rarity);
+        }
+
+        function updateStatsByItem(itemType, rarity) {
+            let statsIncrease;
+            switch (rarity) {
+                case 'normal':
+                    statsIncrease = 1;
+                    break;
+                case 'rare':
+                    statsIncrease = 5;
+                    break;
+                case 'legendary':
+                    statsIncrease = 10;
+                    break;
+            }
+
+            // 아이템 종류에 따라 적절한 능력치를 업데이트합니다.
+            if (itemType === 'helmet') {
+                character.defense += statsIncrease;
+            } else if (itemType === 'armor') {
+                character.health += statsIncrease;
+            } else if (itemType === 'boots') {
+                character.speed += statsIncrease;
+            } else if (itemType === 'weapon') {
+                character.attack += statsIncrease;
+            }
+
+            // 인벤토리를 보여줍니다.
+            showInventory();
+        }
+
+        function removeItemFromInventory(itemType) {
+            let rarity = character.inventory[itemType];
+            updateStatsByItem(itemType, rarity, true);  // true를 추가하여 감소시키도록 합니다.
+            character.inventory[itemType] = null;
+        }
+
+        function updateStatsByItem(itemType, rarity, remove = false) {
+            let statsChange;
+            switch (rarity) {
+                case 'normal':
+                    statsChange = 1;
+                    break;
+                case 'rare':
+                    statsChange = 5;
+                    break;
+                case 'legendary':
+                    statsChange = 10;
+                    break;
+            }
+
+            if (remove) {
+                statsChange *= -1;
+            }
+
+            if (itemType === 'helmet') {
+                character.defense += statsChange;
+            } else if (itemType === 'armor') {
+                character.health += statsChange;
+            } else if (itemType === 'boots') {
+                character.speed += statsChange;
+            } else if (itemType === 'weapon') {
+                character.attack += statsChange;
+            }
+
+            // 인벤토리를 보여줍니다.
+            showInventory();
+        }
+
+        function showInventory() {
+            console.log(`인벤토리 상태:`);
+            console.log(`투구: ${character.inventory.helmet || '없음'}`);
+            console.log(`갑옷: ${character.inventory.armor || '없음'}`);
+            console.log(`신발: ${character.inventory.boots || '없음'}`);
+            console.log(`무기: ${character.inventory.weapon || '없음'}`);
+            console.log(`현재 능력치: 공격력 ${character.attack}, 방어력 ${character.defense}, 체력 ${character.health}, 속도 ${character.speed}`);
+        }
+        function createDungeon(level) {
+            // 던전 레벨에 비례하여 몬스터 구성
+            let monsters = [];
+            for (let i = 0; i < 3; i++) {
+                monsters.push(createMonster(level));
+            }
+            let bossMonster = createMonster(level * 2, true);
+            return { monsters, bossMonster };
+        }
+
+        function createMonster(level, isBoss = false) {
+            let monster = {
+                health: level * (isBoss ? 2 : 1),
+                attack: level * (isBoss ? 2 : 1),
+                defense: level * (isBoss ? 2 : 1),
+                speed: level * (isBoss ? 2 : 1)
+            };
+            return monster;
+        }
+        function enterBattle(dungeonLevel) {
+            // 던전을 생성하여 전투 시작
+            let dungeon = createDungeon(dungeonLevel);
+
+            for (let monster of dungeon.monsters) {
+                fightMonster(monster);
+            }
+
+            // 보스 몬스터와 전투
+            fightMonster(dungeon.bossMonster);
+        }
+
+        function fightMonster(monster) {
+            while (character.health > 0 && monster.health > 0) {
+                let action = prompt("공격하기(a), 방어하기(d), 아이템 사용(i), 도망가기(r):").toLowerCase();
+
+                if (action === 'a') {
+                    attackMonster(monster);
+                } else if (action === 'd') {
+                    defendMonster(monster);
+                } else if (action === 'i') {
+                    useItemInBattle();
+                } else if (action === 'r') {
+                    console.log("전투에서 도망칩니다.");
+                    changeLocation(map.home);
+                    break;
+                }
+            }
+
+            if (character.health <= 0) {
+                console.log("게임 오버!");
+                // 게임 오버 처리를 수행합니다.
+            } else if (monster.health <= 0) {
+                console.log("몬스터를 물리쳤습니다!");
+                // 몬스터를 물리치면 보상을 주거나 레벨을 올릴 수 있습니다.
+                character.money += 10; // 예를 들어 소지금을 증가시킵니다.
+            }
+        }
+
+        function attackMonster(monster) {
+            let damage = Math.max(character.attack - monster.defense, 1);
+            monster.health -= damage;
+            console.log(`몬스터에게 ${damage}의 피해를 입혔습니다.`);
+            receiveDamage(monster);
+        }
+
+        function defendMonster(monster) {
+            let randomDefense = Math.floor(Math.random() * 5);
+            character.defense += randomDefense;
+            console.log(`방어력을 ${randomDefense} 증가시켰습니다.`);
+            receiveDamage(monster);
+        }
+
+        function receiveDamage(monster) {
+            let damage = Math.max(monster.attack - character.defense, 1);
+            character.health -= damage;
+            console.log(`몬스터의 공격을 받아 ${damage}의 피해를 입었습니다.`);
+        }
+
+        function useItemInBattle() {
+            // 인벤토리에서 아이템을 사용하도록 로직을 구현합니다.
+            console.log("아이템 사용은 아직 구현되지 않았습니다.");
+        }
+        function levelUp() {
+            character.level += 1;
+            let pointsToAllocate = 5;
+            console.log(`레벨 업! 현재 레벨: ${character.level}`);
+
+            while (pointsToAllocate > 0) {
+                let choice = prompt(`올릴 능력치를 선택하세요 (공격력 a, 방어력 d, 체력 h, 속도 s):`).toLowerCase();
+
+                if (choice === 'a') {
+                    character.attack += 1;
+                } else if (choice === 'd') {
+                    character.defense += 1;
+                } else if (choice === 'h') {
+                    character.health += 1;
+                } else if (choice === 's') {
+                    character.speed += 1;
+                } else {
+                    console.log("잘못된 선택입니다. 다시 시도하세요.");
+                    continue;
+                }
+
+                pointsToAllocate -= 1;
+            }
+
+            showCharacterStatus();
+        }
+        function saveGame() {
+            let gameState = JSON.stringify(character);
+            localStorage.setItem('gameState', gameState);
+            console.log("게임이 저장되었습니다.");
+        }
+
+        function loadGame() {
+            let gameState = localStorage.getItem('gameState');
+            if (gameState) {
+                character = JSON.parse(gameState);
+                console.log("게임이 로드되었습니다.");
+                showCharacterStatus();
+            } else {
+                console.log("저장된 게임이 없습니다.");
+            }
+        }
+    </script>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>모험 게임</title>
+    <style>
+        /* 스타일 시트 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #game-interface {
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 5px;
+        }
+
+        #character-status,
+        #inventory {
+            margin-top: 20px;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>모험 게임</h1>
+
+    <!-- 게임 시작, 저장, 로드 버튼 -->
+    <button onclick="startGame()">게임 시작</button>
+    <button onclick="saveGame()">게임 저장</button>
+    <button onclick="loadGame()">게임 로드</button>
+
+    <!-- 게임 인터페이스 -->
+    <div id="game-interface">
+        <button onclick="changeLocation('home')">홈으로 이동</button>
+        <button onclick="changeLocation('shop')">상점으로 이동</button>
+        <button onclick="changeLocation('dungeon1')">던전1로 이동</button>
+        <!-- 필요한 던전 버튼 추가 -->
+    </div>
+
+    <!-- 캐릭터 상태 -->
+    <div id="character-status">
+        <h2>캐릭터 상태</h2>
+        <div id="character-info"></div>
+    </div>
+
+    <!-- 인벤토리 -->
+    <div id="inventory">
+        <h2>인벤토리</h2>
+        <div id="inventory-info"></div>
+    </div>
+
+    <!-- 자바스크립트 코드 -->
+    <script>
+        let character = {
+            name: '',
+            level: 1,
+            health: 1,
+            attack: 1,
+            defense: 1,
+            speed: 1,
+            money: 1,
+            inventory: {
+                helmet: null,
+                armor: null,
+                boots: null,
+                weapon: null
+            }
+        };
+
+        function startGame() {
+            character.name = prompt("캐릭터 이름을 입력하세요:");
+            // 다른 초기화 작업을 수행할 수 있습니다.
+            showCharacterStatus();
+        }
+
+        function showCharacterStatus() {
+            console.log(`캐릭터 이름: ${character.name}`);
+            console.log(`레벨: ${character.level}`);
+            console.log(`체력: ${character.health}`);
+            console.log(`공격력: ${character.attack}`);
+            console.log(`방어력: ${character.defense}`);
+            console.log(`속도: ${character.speed}`);
+            console.log(`소지금: ${character.money}`);
+            // 아이템 및 인벤토리 상태를 보여줍니다.
+        }
+        let map = {
+            home: "home",
+            shop: "shop",
+            dungeons: Array.from({ length: 10 }, (_, i) => `dungeon${i + 1}`)
+        };
+
+        let currentLocation = map.home;
+
+        function changeLocation(newLocation) {
+            currentLocation = newLocation;
+            console.log(`현재 위치: ${currentLocation}`);
+        }
+        function addItemToInventory(itemType, rarity) {
+            character.inventory[itemType] = rarity;
+            updateStatsByItem(itemType, rarity);
+        }
+
+        function updateStatsByItem(itemType, rarity) {
+            let statsIncrease;
+            switch (rarity) {
+                case 'normal':
+                    statsIncrease = 1;
+                    break;
+                case 'rare':
+                    statsIncrease = 5;
+                    break;
+                case 'legendary':
+                    statsIncrease = 10;
+                    break;
+            }
+
+            // 아이템 종류에 따라 적절한 능력치를 업데이트합니다.
+            if (itemType === 'helmet') {
+                character.defense += statsIncrease;
+            } else if (itemType === 'armor') {
+                character.health += statsIncrease;
+            } else if (itemType === 'boots') {
+                character.speed += statsIncrease;
+            } else if (itemType === 'weapon') {
+                character.attack += statsIncrease;
+            }
+
+            // 인벤토리를 보여줍니다.
+            showInventory();
+        }
+
+        function removeItemFromInventory(itemType) {
+            let rarity = character.inventory[itemType];
+            updateStatsByItem(itemType, rarity, true);  // true를 추가하여 감소시키도록 합니다.
+            character.inventory[itemType] = null;
+        }
+
+        function updateStatsByItem(itemType, rarity, remove = false) {
+            let statsChange;
+            switch (rarity) {
+                case 'normal':
+                    statsChange = 1;
+                    break;
+                case 'rare':
+                    statsChange = 5;
+                    break;
+                case 'legendary':
+                    statsChange = 10;
+                    break;
+            }
+
+            if (remove) {
+                statsChange *= -1;
+            }
+
+            if (itemType === 'helmet') {
+                character.defense += statsChange;
+            } else if (itemType === 'armor') {
+                character.health += statsChange;
+            } else if (itemType === 'boots') {
+                character.speed += statsChange;
+            } else if (itemType === 'weapon') {
+                character.attack += statsChange;
+            }
+
+            // 인벤토리를 보여줍니다.
+            showInventory();
+        }
+
+        function showInventory() {
+            console.log(`인벤토리 상태:`);
+            console.log(`투구: ${character.inventory.helmet || '없음'}`);
+            console.log(`갑옷: ${character.inventory.armor || '없음'}`);
+            console.log(`신발: ${character.inventory.boots || '없음'}`);
+            console.log(`무기: ${character.inventory.weapon || '없음'}`);
+            console.log(`현재 능력치: 공격력 ${character.attack}, 방어력 ${character.defense}, 체력 ${character.health}, 속도 ${character.speed}`);
+        }
+        function createDungeon(level) {
+            // 던전 레벨에 비례하여 몬스터 구성
+            let monsters = [];
+            for (let i = 0; i < 3; i++) {
+                monsters.push(createMonster(level));
+            }
+            let bossMonster = createMonster(level * 2, true);
+            return { monsters, bossMonster };
+        }
+
+        function createMonster(level, isBoss = false) {
+            let monster = {
+                health: level * (isBoss ? 2 : 1),
+                attack: level * (isBoss ? 2 : 1),
+                defense: level * (isBoss ? 2 : 1),
+                speed: level * (isBoss ? 2 : 1)
+            };
+            return monster;
+        }
+        function enterBattle(dungeonLevel) {
+            // 던전을 생성하여 전투 시작
+            let dungeon = createDungeon(dungeonLevel);
+
+            for (let monster of dungeon.monsters) {
+                fightMonster(monster);
+            }
+
+            // 보스 몬스터와 전투
+            fightMonster(dungeon.bossMonster);
+        }
+
+        function fightMonster(monster) {
+            while (character.health > 0 && monster.health > 0) {
+                let action = prompt("공격하기(a), 방어하기(d), 아이템 사용(i), 도망가기(r):").toLowerCase();
+
+                if (action === 'a') {
+                    attackMonster(monster);
+                } else if (action === 'd') {
+                    defendMonster(monster);
+                } else if (action === 'i') {
+                    useItemInBattle();
+                } else if (action === 'r') {
+                    console.log("전투에서 도망칩니다.");
+                    changeLocation(map.home);
+                    break;
+                }
+            }
+
+            if (character.health <= 0) {
+                console.log("게임 오버!");
+                // 게임 오버 처리를 수행합니다.
+            } else if (monster.health <= 0) {
+                console.log("몬스터를 물리쳤습니다!");
+                // 몬스터를 물리치면 보상을 주거나 레벨을 올릴 수 있습니다.
+                character.money += 10; // 예를 들어 소지금을 증가시킵니다.
+            }
+        }
+
+        function attackMonster(monster) {
+            let damage = Math.max(character.attack - monster.defense, 1);
+            monster.health -= damage;
+            console.log(`몬스터에게 ${damage}의 피해를 입혔습니다.`);
+            receiveDamage(monster);
+        }
+
+        function defendMonster(monster) {
+            let randomDefense = Math.floor(Math.random() * 5);
+            character.defense += randomDefense;
+            console.log(`방어력을 ${randomDefense} 증가시켰습니다.`);
+            receiveDamage(monster);
+        }
+
+        function receiveDamage(monster) {
+            let damage = Math.max(monster.attack - character.defense, 1);
+            character.health -= damage;
+            console.log(`몬스터의 공격을 받아 ${damage}의 피해를 입었습니다.`);
+        }
+
+        function useItemInBattle() {
+            // 인벤토리에서 아이템을 사용하도록 로직을 구현합니다.
+            console.log("아이템 사용은 아직 구현되지 않았습니다.");
+        }
+        function levelUp() {
+            character.level += 1;
+            let pointsToAllocate = 5;
+            console.log(`레벨 업! 현재 레벨: ${character.level}`);
+
+            while (pointsToAllocate > 0) {
+                let choice = prompt(`올릴 능력치를 선택하세요 (공격력 a, 방어력 d, 체력 h, 속도 s):`).toLowerCase();
+
+                if (choice === 'a') {
+                    character.attack += 1;
+                } else if (choice === 'd') {
+                    character.defense += 1;
+                } else if (choice === 'h') {
+                    character.health += 1;
+                } else if (choice === 's') {
+                    character.speed += 1;
+                } else {
+                    console.log("잘못된 선택입니다. 다시 시도하세요.");
+                    continue;
+                }
+
+                pointsToAllocate -= 1;
+            }
+
+            showCharacterStatus();
+        }
+        function saveGame() {
+            let gameState = JSON.stringify(character);
+            localStorage.setItem('gameState', gameState);
+            console.log("게임이 저장되었습니다.");
+        }
+
+        function loadGame() {
+            let gameState = localStorage.getItem('gameState');
+            if (gameState) {
+                character = JSON.parse(gameState);
+                console.log("게임이 로드되었습니다.");
+                showCharacterStatus();
+            } else {
+                console.log("저장된 게임이 없습니다.");
+            }
+        }
+    </script>
+</body>
+
+</html>

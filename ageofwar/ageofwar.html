@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Age of War</title>
+    <meta charset="UTF-8">
+    <style>
+        /* 게임 스타일 */
+        #game {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        #interface {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #playerBase, #enemyBase {
+            position: absolute;
+            width: 50px;
+            height: 100px;
+            background-color: gray;
+        }
+
+        #playerBase {
+            left: 0;
+        }
+
+        #enemyBase {
+            right: 0;
+        }
+
+        .unit {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            border-radius: 50%;
+        }
+
+        .enemy-unit {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="playerBase"></div>
+        <div id="enemyBase"></div>
+    </div>
+
+    <div id="interface">
+        <p>연대: <span id="ageDisplay">1</span></p>
+        <p>자원: <span id="resourceDisplay">100</span></p>
+        <button id="upgradeButton">연대 업그레이드</button>
+        <div id="unitChoices">
+            <!-- 유닛 선택 공간 -->
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
