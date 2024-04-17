@@ -7,7 +7,7 @@ import time
 
 def moreView(count):
     with TorRequest(proxy_port=9050, ctrl_port=9051, password=None) as tor_session:
-        views = 0
+        views = 1
         for _ in range(count):
             
             tor_session.reset_identity()
@@ -47,5 +47,5 @@ def moreView(count):
                 print('Connection error:', e)
 
 # Example usage:
-count = int(input("Enter the number of iterations: "))
+count = 1000000 #int(input("Enter the number of iterations: "))
 moreView(count)
