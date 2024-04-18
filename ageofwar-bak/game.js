@@ -3,7 +3,6 @@ const ageDisplay = document.getElementById('ageDisplay');
 const resourceDisplay = document.getElementById('resourceDisplay');
 const upgradeButton = document.getElementById('upgradeButton');
 const unitChoices = document.getElementById('unitChoices');
-const playerHealthBar = document.getElementById('playerHealthBar');
 
 let currentAge = 0;
 let playerResources = 100;
@@ -74,15 +73,13 @@ const ages = [
 function startGame() {
     updateGameArea();
     setupInterface();
-    setInterval(addResources, 1000); // Add resources every second
-    setInterval(enemySpawnUnit, 3000); // Set enemy unit spawn interval
+    setInterval(addResources, 1000); // 1초에 자원 추가
+    setInterval(enemySpawnUnit, 3000); // 적 유닛 소환 주기 설정
 }
 
 function updateGameArea() {
     ageDisplay.textContent = currentAge + 1;
     resourceDisplay.textContent = playerResources;
-    playerHealthBar.textContent = `Player Health: ${playerBaseHealth}`;
-    enemyHealthBar.textContent = `Enemy Health: ${enemyBaseHealth}`;
 }
 
 function setupInterface() {
@@ -96,7 +93,6 @@ function setupInterface() {
     upgradeButton.addEventListener('click', upgradeAge);
 }
 
-// Modify upgradeAge function to call updateBaseStyles after age upgrade
 function upgradeAge() {
     if (currentAge < ages.length - 1 && playerResources >= 100) {
         currentAge++;
@@ -105,6 +101,7 @@ function upgradeAge() {
         setupInterface();
     }
 }
+
 function createUnit(unitIndex) {
     const unit = ages[currentAge].units[unitIndex];
     if (playerResources >= unit.cost) {

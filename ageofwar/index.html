@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Age of War</title>
+    <meta charset="UTF-8">
+    <style>
+        /* 게임 스타일 */
+        #game {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; /* 사용자 창 사이즈에 맞게 게임 영역의 너비를 100%로 조정 */
+            height: 100vh; /* 사용자 창 사이즈에 맞게 게임 영역의 높이를 100vh로 조정 */
+            position: relative;
+            background-color: #f0f0f0;
+            border: 1px solid black;
+        }
+
+        #interface {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        #playerBase,
+        #enemyBase {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: gray;
+        }
+
+        #playerBase {
+            left: 0;
+        }
+
+        #enemyBase {
+            right: 0;
+        }
+
+        .unit {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: blue;
+            border-radius: 50%;
+        }
+
+        .enemy-unit {
+            background-color: red;
+        }
+
+        /* 유닛의 체력바 스타일 */
+        .health-bar {
+            position: absolute;
+            width: 100%;
+            /* 유닛 또는 기지의 너비에 맞추기 */
+            height: 5px;
+            /* 체력바의 높이 */
+            background-color: red;
+            /* 배경 색상 */
+            border: 1px solid black;
+            /* 테두리 추가 */
+        }
+
+
+        /* 유닛에 체력바를 유닛의 하단에 위치 */
+        .unit .health-bar {
+            bottom: -10px;
+            left: 0;
+            background-color: blue;
+        }
+
+        /* 적 유닛에 체력바를 적 유닛의 하단에 위치 */
+        .enemy-unit .health-bar {
+            top: -10px;
+            right: 0;
+        }
+
+        /* 플레이어 기지 체력바 */
+        #playerHealthBar {
+            position: fixed; /* 창 고정 */
+            top: 10px;
+            left: 10px;
+            width: 200px;
+            height: 20px;
+            background-color: blue;
+            border: 1px solid black;
+            text-align: center; /* 텍스트 정렬 */
+            line-height: 20px; /* 세로 정렬 */
+            color: white;
+            font-weight: bold;
+        }
+
+        /* 적 기지 체력바 */
+        #enemyHealthBar {
+            position: fixed; /* 창 고정 */
+            top: 10px;
+            right: 10px;
+            width: 200px;
+            height: 20px;
+            background-color: red;
+            border: 1px solid black;
+            text-align: center; /* 텍스트 정렬 */
+            line-height: 20px; /* 세로 정렬 */
+            color: white;
+            font-weight: bold;
+        }
+
+        #ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%; /* 바닥의 너비 */
+            height: 50%; /* 바닥의 높이 */
+            background-color: #a5d6a7; /* 바닥 색상 */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game">
+        <div id="playerBase"></div>
+        <div id="enemyBase"></div>
+        <div id="ground"></div> <!-- 바닥 요소 -->
+    </div>
+
+    <div id="interface">
+        <p>연대: <span id="ageDisplay">1</span></p>
+        <p>자원: <span id="resourceDisplay">100</span></p>
+        <button id="upgradeButton">연대 업그레이드</button>
+        <!-- 유닛 선택 공간 -->
+        <div id="unitChoices"></div>
+    </div>
+
+    <!-- 체력바 -->
+    <div id="playerHealthBar">Player Health: 500</div>
+    <div id="enemyHealthBar">Enemy Health: 500</div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
